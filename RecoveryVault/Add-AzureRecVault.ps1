@@ -66,8 +66,8 @@ SOFTWARE.
 #$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 
-$ArmTemplateRSV =  "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.json"
-$ArmTemplateRSVparams = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.parameters.json"
+$ArmTemplateRSV =  "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.json"
+$ArmTemplateRSVparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.parameters.json"
 
 #---------------------------------------------------------[Functions]--------------------------------------------------------
 
