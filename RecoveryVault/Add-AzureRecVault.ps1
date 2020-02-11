@@ -68,7 +68,8 @@ SOFTWARE.
 
 $ArmTemplateRSV =  "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.json"
 $ArmTemplateRSVparams = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.parameters.json"
-
+$ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.json"
+$ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.parameters.json"
 #---------------------------------------------------------[Functions]--------------------------------------------------------
 
 
@@ -115,7 +116,24 @@ Write-Host "The list of resource groups present:" -ForegroundColor Cyan
 Get-AzResourceGroup | Format-Table ResourceGroupName,Location
 
 #getting group to deploy vault in
-$GroupName = Read-Host "Type in Resource Group name to deploy the Recovery Service Vault to"
+$GroupName = Read-Host "Type in Resource Group name to deploy the Recovery Service Vault to" 
+
+#getting recovery plan schedule
+$RsvBkpPlan = Read-Host "Type '1' for DAILY backup shedule, '2' for WEEKLY"
+switch ($RsvBkpPlan) {
+   '1' {
+      Write-Host "Creating RSV with DAILY backup schedule" -ForegroundColor Cyan
+      New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVdaily -TemplateParameterUri $ArmTemplateRSVdailyparams #-WhatIf
+   }
+   '2' {
+      Write-Host "Creating RSV with WEEKLY backup schedule" -ForegroundColor Cyan
+      New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSV -TemplateParameterUri $ArmTemplateRSVparams #-WhatIf
+   }
+   Default {
+      Write-Host "Incorrect value, exiting, bye"
+      exit
+   }
+}
 
 #deploying RSV with weekly backup schedule
-New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSV -TemplateParameterUri $ArmTemplateRSVparams #-WhatIf
+#New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSV -TemplateParameterUri $ArmTemplateRSVparams #-WhatIf
