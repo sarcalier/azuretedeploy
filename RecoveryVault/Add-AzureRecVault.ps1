@@ -145,3 +145,6 @@ switch ($NewRSVname) {
    }
    Default {Write-Host "Recovery Service Volume name: $($NewRSVname)" -ForegroundColor Cyan}
 }
+
+#removing the default backup policy
+Remove-AzRecoveryServicesBackupProtectionPolicy -VaultId (Get-AzRecoveryServicesVault -Name $NewRSVname).id -Name "DefaultPolicy" -Confirm: $false -Force
