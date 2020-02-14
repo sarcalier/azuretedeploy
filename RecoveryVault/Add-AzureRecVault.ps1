@@ -66,9 +66,10 @@ SOFTWARE.
 #$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 
-$ArmTemplateRSV =  "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.json"
-$ArmTemplateRSVparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.parameters.json"
-
+$ArmTemplateRSVweekly =  "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.json"
+$ArmTemplateRSVweeklyparams = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.parameters.json"
+$ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.json"
+$ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.parameters.json"
 #---------------------------------------------------------[Functions]--------------------------------------------------------
 
 
@@ -115,7 +116,32 @@ Write-Host "The list of resource groups present:" -ForegroundColor Cyan
 Get-AzResourceGroup | Format-Table ResourceGroupName,Location
 
 #getting group to deploy vault in
-$GroupName = Read-Host "Type in Resource Group name to deploy the Recovery Service Vault to"
+$GroupName = Read-Host "Type in Resource Group name to deploy the Recovery Service Vault to" 
 
-#deploying RSV with weekly backup schedule
-New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSV -TemplateParameterUri $ArmTemplateRSVparams #-WhatIf
+#getting recovery plan schedule
+$RsvBkpPlan = Read-Host "Type '1' for DAILY backup shedule, '2' for WEEKLY"
+switch ($RsvBkpPlan) {
+   '1' {
+      Write-Host "Creating RSV with DAILY backup schedule" -ForegroundColor Cyan
+      $DeplOut = New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVdaily -TemplateParameterUri $ArmTemplateRSVdailyparams #-WhatIf
+   }
+   '2' {
+      Write-Host "Creating RSV with WEEKLY backup schedule" -ForegroundColor Cyan
+      $DeplOut = New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVweekly -TemplateParameterUri $ArmTemplateRSVweeklyparams #-WhatIf
+   }
+   Default {
+      Write-Host "Incorrect value, exiting, bye" -ForegroundColor Red
+      exit
+   }
+}
+
+#getting the new RSV name
+$NewRSVname = $DeplOut.Parameters.vaultName.Value
+
+switch ($NewRSVname) {
+   $null {
+      Write-Host "Recovery Service Volume deployment failed" -ForegroundColor Red
+      exit
+   }
+   Default {Write-Host "Recovery Service Volume name: $($NewRSVname)" -ForegroundColor Cyan}
+}
