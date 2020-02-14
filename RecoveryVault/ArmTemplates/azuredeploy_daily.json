@@ -4,6 +4,7 @@
   "parameters": {
     "vaultName": {
       "type": "string",
+      "defaultValue": "[concat('RSVdaily-', substring(uniqueString(resourceGroup().id),0,5))]",
       "metadata": {
         "description": "Name of the Recovery Services Vault"
       }
