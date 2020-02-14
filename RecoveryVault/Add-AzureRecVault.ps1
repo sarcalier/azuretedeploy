@@ -66,8 +66,8 @@ SOFTWARE.
 #$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 
-$ArmTemplateRSV =  "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.json"
-$ArmTemplateRSVparams = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.parameters.json"
+$ArmTemplateRSVweekly =  "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.json"
+$ArmTemplateRSVweeklyparams = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-recovery-services-weekly-backup-policy-create/azuredeploy.parameters.json"
 $ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.json"
 $ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.parameters.json"
 #---------------------------------------------------------[Functions]--------------------------------------------------------
@@ -127,7 +127,7 @@ switch ($RsvBkpPlan) {
    }
    '2' {
       Write-Host "Creating RSV with WEEKLY backup schedule" -ForegroundColor Cyan
-      New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSV -TemplateParameterUri $ArmTemplateRSVparams #-WhatIf
+      New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVweekly -TemplateParameterUri $ArmTemplateRSVweeklyparams #-WhatIf
    }
    Default {
       Write-Host "Incorrect value, exiting, bye"
@@ -135,5 +135,3 @@ switch ($RsvBkpPlan) {
    }
 }
 
-#deploying RSV with weekly backup schedule
-#New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSV -TemplateParameterUri $ArmTemplateRSVparams #-WhatIf
