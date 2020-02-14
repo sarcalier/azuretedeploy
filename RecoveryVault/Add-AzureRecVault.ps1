@@ -123,15 +123,25 @@ $RsvBkpPlan = Read-Host "Type '1' for DAILY backup shedule, '2' for WEEKLY"
 switch ($RsvBkpPlan) {
    '1' {
       Write-Host "Creating RSV with DAILY backup schedule" -ForegroundColor Cyan
-      New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVdaily -TemplateParameterUri $ArmTemplateRSVdailyparams #-WhatIf
+      $DeplOut = New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVdaily -TemplateParameterUri $ArmTemplateRSVdailyparams #-WhatIf
    }
    '2' {
       Write-Host "Creating RSV with WEEKLY backup schedule" -ForegroundColor Cyan
-      New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVweekly -TemplateParameterUri $ArmTemplateRSVweeklyparams #-WhatIf
+      $DeplOut = New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVweekly -TemplateParameterUri $ArmTemplateRSVweeklyparams #-WhatIf
    }
    Default {
-      Write-Host "Incorrect value, exiting, bye"
+      Write-Host "Incorrect value, exiting, bye" -ForegroundColor Red
       exit
    }
 }
 
+#getting the new RSV name
+$NewRSVname = $DeplOut.Parameters.vaultName.Value
+
+switch ($NewRSVname) {
+   $null {
+      Write-Host "Recovery Service Volume deployment failed" -ForegroundColor Red
+      exit
+   }
+   Default {Write-Host "Recovery Service Volume name: $($NewRSVname)" -ForegroundColor Cyan}
+}
