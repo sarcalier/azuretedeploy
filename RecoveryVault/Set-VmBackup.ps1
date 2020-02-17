@@ -28,6 +28,7 @@ Date      	          By	Comments
  Required Modules:
    Az.Accounts
    Az.RecoveryServices
+   Az.Compute
 
 .LICENSE
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -81,19 +82,31 @@ if(-not (Test-AzureConnected)) {Connect-AzAccount}
 
 #displaying the list of availabel RSVs for given subscription
 Write-Host "List of RSVs available:" -ForegroundColor Cyan
-Get-AzRecoveryServicesVault | Format-Table Name,Location,ResourceGroupName,ID
+Get-AzRecoveryServicesVault | Format-Table Name,Location,ResourceGroupName -AutoSize
 
 #input of the desired RSV
-$TheChosenOneRSV =  Read-Host "Please paste in the ID of target RSV"
+$TheChosenOneRSV =  Read-Host "Please paste in the NAME of target RSV"
+$TheChosenOneRSVid = (Get-AzRecoveryServicesVault -Name $TheChosenOneRSV).id
+$TheChosenOneRSVgroup = (Get-AzRecoveryServicesVault -Name $TheChosenOneRSV).ResourceGroupName
+$TheChosenOneRSVlocation = (Get-AzRecoveryServicesVault -Name $TheChosenOneRSV).Location
 
 #Recovery Policies Available
-Write-Host "Optet RSV contains the following Policies:"
-Get-AzRecoveryServicesBackupProtectionPolicy -VaultId $TheChosenOneRSV | Where-Object {$_.WorkloadType -eq "AzureVM"} | Format-Table Name 
+#Write-Host "Optet RSV contains the following Policies:"
+#Get-AzRecoveryServicesBackupProtectionPolicy -VaultId $TheChosenOneRSVid | Where-Object {$_.WorkloadType -eq "AzureVM"} | Format-Table Name 
 
 #input of desired policy
-$TheChosenOnePolicy = Read-Host "Please paste in the name of Backup Policy"
+#$TheChosenOnePolicy = Read-Host "Please paste in the name of Backup Policy"
+
+#getting the BackupPolicy for the RSV
+$BkpPol = Get-AzRecoveryServicesBackupProtectionPolicy -VaultId $TheChosenOneRSVid | Where-Object {$_.WorkloadType -eq "AzureVM"} 
+#$RSVResGroup = Get-AzRecoveryServicesVault -identity $TheChosenOneRSV
+
+#listing VMs available
+Write-Host "Please see below VMs available for chosen RSV location" -ForegroundColor Cyan
+Get-AzVM -Location $TheChosenOneRSVlocation | Format-Table Name,ResourceGroupName,Location
 
 
-$pol = Get-AzRecoveryServicesBackupProtectionPolicy -Name $TheChosenOnePolicy -VaultId $TheChosenOneRSV
-$RSVResGroup = Get-AzRecoveryServicesVault -identity $TheChosenOneRSV
-Enable-AzRecoveryServicesBackupProtection -Policy $pol -Name "vm03" -VaultId $TheChosenOneRSV -ResourceGroupName "bkp03" 
+#input the VM name
+$TheChosenOneVMname = Read-Host "Please paste in the NAME of target VM"
+
+Enable-AzRecoveryServicesBackupProtection -Name $TheChosenOneVMname -Policy $BkpPol  -VaultId $TheChosenOneRSVid -ResourceGroupName $TheChosenOneRSVgroup -whatif
