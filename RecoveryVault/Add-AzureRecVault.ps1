@@ -1,5 +1,5 @@
 <#
-#### requires ps-version 3.0 ####
+#### requires ps-version 5.0 ####
 <#
 .SYNOPSIS
 Creates Recovery Volume with weekly backup schedule, basing on default MS ARM templates
@@ -25,7 +25,10 @@ Date      	          By	Comments
    <<website>>
 
 .COMPONENT
- Required Modules: 
+ Required Modules:
+   Az.Accounts
+   Az.RecoveryServices
+   Az.Compute
 
 .LICENSE
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -56,8 +59,10 @@ SOFTWARE.
 #Set Error Action 
 #$ErrorActionPreference = 'SilentlyContinue'
 
-
-
+#simple check for required PS modules
+Install-Module Az.Accounts
+Install-Module Az.RecoveryServices
+Install-Module Az.Compute
 
 #---------------------------------------------------------[Variables]--------------------------------------------------------
 #Log File Info
