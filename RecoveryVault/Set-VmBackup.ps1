@@ -58,6 +58,11 @@ SOFTWARE.
 
 #Set Error Action 
 #$ErrorActionPreference = 'SilentlyContinue'
+
+Install-Module Az.Accounts #-Confirm: $false -Force
+Install-Module Az.RecoveryServices #-Confirm: $false -Force
+Install-Module Az.Compute #-Confirm: $false -Force
+
 #---------------------------------------------------------[Variables]--------------------------------------------------------
 #Log File Info
 #$sLogPath = 
@@ -110,3 +115,6 @@ Get-AzVM -Location $TheChosenOneRSVlocation | Format-Table Name,ResourceGroupNam
 $TheChosenOneVMname = Read-Host "Please paste in the NAME of target VM"
 
 Enable-AzRecoveryServicesBackupProtection -Name $TheChosenOneVMname -Policy $BkpPol  -VaultId $TheChosenOneRSVid -ResourceGroupName $TheChosenOneRSVgroup -whatif
+if ($?) {
+   Write-Host "VM has been successfully added to target RSV" -ForegroundColor Cyan
+}
