@@ -62,7 +62,7 @@ SOFTWARE.
 #simple check for required PS modules
 Install-Module Az.Accounts
 Install-Module Az.RecoveryServices
-Install-Module Az.Compute
+#Install-Module Az.Compute
 
 #---------------------------------------------------------[Variables]--------------------------------------------------------
 #Log File Info
