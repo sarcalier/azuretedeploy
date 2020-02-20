@@ -2,7 +2,6 @@
 Azure Automated deployment tools
 
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/sarcalier/azuretedeploy/dev/RecoveryVault/ArmTemplates/azuredeploy.json"
-   target="_blank">
+<a href="https://azuredeploy.net/?repository=https://github.com/sarcalier/azuretedeploy/tree/dev" alt="Deploy to Azure" target="_blank">
    <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
