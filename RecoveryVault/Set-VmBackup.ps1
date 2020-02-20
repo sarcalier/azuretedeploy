@@ -114,7 +114,7 @@ Get-AzVM -Location $TheChosenOneRSVlocation | Format-Table Name,ResourceGroupNam
 #input the VM name
 $TheChosenOneVMname = Read-Host "Please paste in the NAME of target VM"
 
-Enable-AzRecoveryServicesBackupProtection -Name $TheChosenOneVMname -Policy $BkpPol  -VaultId $TheChosenOneRSVid -ResourceGroupName $TheChosenOneRSVgroup -whatif
+Enable-AzRecoveryServicesBackupProtection -Name $TheChosenOneVMname -Policy $BkpPol  -VaultId $TheChosenOneRSVid -ResourceGroupName $TheChosenOneRSVgroup #-whatif
 if ($?) {
    Write-Host "VM has been successfully added to target RSV" -ForegroundColor Cyan
 }
