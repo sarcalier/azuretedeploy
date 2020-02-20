@@ -4,7 +4,7 @@
   "parameters": {
     "vaultName": {
       "type": "string",
-      "defaultValue": "[concat('RSVweekly-', substring(uniqueString(resourceGroup().id),0,5))]",
+      "defaultValue": "RSVdaily",
       "metadata": {
         "description": "Name of the Recovery Services Vault"
       }
@@ -15,16 +15,10 @@
         "description": "Name of the Backup Policy"
       }
     },
-    "scheduleRunDays": {
-      "type": "array",
-      "metadata": {
-        "description": "Backup Schedule will run on array of Days like, Monday, Tuesday etc. Applies in Weekly Backup Type only."
-      }
-    },
     "scheduleRunTimes": {
       "type": "array",
       "metadata": {
-        "description": "Times in day when backup should be triggered. e.g. 01:00, 13:00. This will be used in LTR too for daily, weekly, monthly and yearly backup."
+        "description": "Times in day when backup should be triggered. e.g. 01:00 or 13:00. Must be an array, however for IaaS VMs only one value is valid. This will be used in LTR too for daily, weekly, monthly and yearly backup."
       }
     },
     "timeZone": {
@@ -33,22 +27,36 @@
         "description": "Any Valid timezone, for example:UTC, Pacific Standard Time. Refer: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
       }
     },
+    "instantRpRetentionRangeInDays": {
+      "type": "int",
+      "defaultValue": 2,
+      "allowedValues": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "metadata": {
+        "description": "Number of days Instant Recovery Point should be retained"
+      }
+    },
+    "dailyRetentionDurationCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of days you want to retain the backup"
+      }
+    },
+    "daysOfTheWeek": {
+      "type": "array",
+      "metadata": {
+        "description": "Backup will run on array of Days like, Monday, Tuesday etc. Applies in Weekly retention only."
+      }
+    },
     "weeklyRetentionDurationCount": {
       "type": "int",
       "metadata": {
         "description": "Number of weeks you want to retain the backup"
-      }
-    },
-    "daysOfTheWeekForMontlyRetention": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of Days for Monthly Retention (Min One or Max all values from scheduleRunDays, but not any other days which are not part of scheduleRunDays)"
-      }
-    },
-    "weeksOfTheMonthForMonthlyRetention": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of Weeks for Monthly Retention - First, Second, Third, Fourth, Last"
       }
     },
     "monthlyRetentionDurationCount": {
@@ -61,18 +69,6 @@
       "type": "array",
       "metadata": {
         "description": "Array of Months for Yearly Retention"
-      }
-    },
-    "daysOfTheWeekForYearlyRetention": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of Days for Yearly Retention (Min One or Max all values from scheduleRunDays, but not any other days which are not part of scheduleRunDays)"
-      }
-    },
-    "weeksOfTheMonthForYearlyRetention": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of Weeks for Yearly Retention - First, Second, Third, Fourth, Last"
       }
     },
     "yearlyRetentionDurationCount": {
@@ -92,7 +88,7 @@
   "resources": [
     {
       "type": "Microsoft.RecoveryServices/vaults",
-      "apiVersion": "2016-06-01",
+      "apiVersion": "2015-11-10",
       "name": "[parameters('vaultName')]",
       "location": "[parameters('location')]",
       "sku": {
@@ -111,17 +107,23 @@
       "location": "[parameters('location')]",
       "properties": {
         "backupManagementType": "AzureIaasVM",
-        "instantRpRetentionRangeInDays": 5,
+        "instantRpRetentionRangeInDays": "[parameters('instantRpRetentionRangeInDays')]",
         "schedulePolicy": {
-          "scheduleRunFrequency": "Weekly",
-          "scheduleRunDays": "[parameters('scheduleRunDays')]",
+          "scheduleRunFrequency": "Daily",
+          "scheduleRunDays": null,
           "scheduleRunTimes": "[parameters('scheduleRunTimes')]",
           "schedulePolicyType": "SimpleSchedulePolicy"
         },
         "retentionPolicy": {
-          "dailySchedule": null,
+          "dailySchedule": {
+            "retentionTimes": "[parameters('scheduleRunTimes')]",
+            "retentionDuration": {
+              "count": "[parameters('dailyRetentionDurationCount')]",
+              "durationType": "Days"
+            }
+          },
           "weeklySchedule": {
-            "daysOfTheWeek": "[parameters('scheduleRunDays')]",
+            "daysOfTheWeek": "[parameters('daysOfTheWeek')]",
             "retentionTimes": "[parameters('scheduleRunTimes')]",
             "retentionDuration": {
               "count": "[parameters('weeklyRetentionDurationCount')]",
@@ -129,7 +131,7 @@
             }
           },
           "monthlySchedule": {
-            "retentionScheduleFormatType": "Weekly",
+            "retentionScheduleFormatType": "Daily",
             "retentionScheduleDaily": {
               "daysOfTheMonth": [
                 {
@@ -138,10 +140,7 @@
                 }
               ]
             },
-            "retentionScheduleWeekly": {
-              "daysOfTheWeek": "[parameters('daysOfTheWeekForMontlyRetention')]",
-              "weeksOfTheMonth": "[parameters('weeksOfTheMonthForMonthlyRetention')]"
-            },
+            "retentionScheduleWeekly": null,
             "retentionTimes": "[parameters('scheduleRunTimes')]",
             "retentionDuration": {
               "count": "[parameters('monthlyRetentionDurationCount')]",
@@ -149,7 +148,7 @@
             }
           },
           "yearlySchedule": {
-            "retentionScheduleFormatType": "Weekly",
+            "retentionScheduleFormatType": "Daily",
             "monthsOfYear": "[parameters('monthsOfYear')]",
             "retentionScheduleDaily": {
               "daysOfTheMonth": [
@@ -159,10 +158,7 @@
                 }
               ]
             },
-            "retentionScheduleWeekly": {
-              "daysOfTheWeek": "[parameters('daysOfTheWeekForYearlyRetention')]",
-              "weeksOfTheMonth": "[parameters('weeksOfTheMonthForYearlyRetention')]"
-            },
+            "retentionScheduleWeekly": null,
             "retentionTimes": "[parameters('scheduleRunTimes')]",
             "retentionDuration": {
               "count": "[parameters('yearlyRetentionDurationCount')]",
