@@ -71,10 +71,10 @@ Install-Module Az.RecoveryServices
 #$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 
-$ArmTemplateRSVweekly =  "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.json"
-$ArmTemplateRSVweeklyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.parameters.json"
-$ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.json"
-$ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.parameters.json"
+$ArmTemplateRSVweekly =  "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy.json"
+$ArmTemplateRSVweeklyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy.parameters.json"
+$ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy_daily.json"
+$ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy_daily.parameters.json"
 #---------------------------------------------------------[Functions]--------------------------------------------------------
 
 
@@ -136,7 +136,7 @@ switch ($RsvBkpPlan) {
    }
    '3' {
       Write-Host "Redirecting to customizable deployment" -ForegroundColor Cyan
-      Start-Process "https://azuredeploy.net/?repository=https://github.com/sarcalier/azuretedeploy/tree/master"
+      Start-Process "https://azuredeploy.net/?repository=https://github.com/sarcalier/azuretedeploy/tree/master/RecoveryVault/ArmTemplates/custom"
       exit
    }
    Default {
