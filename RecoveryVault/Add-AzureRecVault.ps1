@@ -71,10 +71,10 @@ Install-Module Az.RecoveryServices
 #$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 
-$ArmTemplateRSVweekly =  "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.json"
-$ArmTemplateRSVweeklyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy.parameters.json"
-$ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.json"
-$ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/azuredeploy_daily.parameters.json"
+$ArmTemplateRSVweekly =  "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy.json"
+$ArmTemplateRSVweeklyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy.parameters.json"
+$ArmTemplateRSVdaily = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy_daily.json"
+$ArmTemplateRSVdailyparams = "https://raw.githubusercontent.com/sarcalier/azuretedeploy/master/RecoveryVault/ArmTemplates/auto/azuredeploy_daily.parameters.json"
 #---------------------------------------------------------[Functions]--------------------------------------------------------
 
 
@@ -124,7 +124,7 @@ Get-AzResourceGroup | Format-Table ResourceGroupName,Location
 $GroupName = Read-Host "Type in Resource Group name to deploy the Recovery Service Vault to" 
 
 #getting recovery plan schedule
-$RsvBkpPlan = Read-Host "Type '1' for DAILY backup shedule, '2' for WEEKLY"
+$RsvBkpPlan = Read-Host "Type '1' for DAILY backup shedule, '2' for WEEKLY, '3' for CUSRTOMIZABLE"
 switch ($RsvBkpPlan) {
    '1' {
       Write-Host "Creating RSV with DAILY backup schedule" -ForegroundColor Cyan
@@ -133,6 +133,11 @@ switch ($RsvBkpPlan) {
    '2' {
       Write-Host "Creating RSV with WEEKLY backup schedule" -ForegroundColor Cyan
       $DeplOut = New-AzResourceGroupDeployment -ResourceGroupName $GroupName -TemplateUri $ArmTemplateRSVweekly -TemplateParameterUri $ArmTemplateRSVweeklyparams #-WhatIf
+   }
+   '3' {
+      Write-Host "Redirecting to customizable deployment" -ForegroundColor Cyan
+      Start-Process "https://azuredeploy.net/?repository=https://github.com/sarcalier/azuretedeploy/tree/master/RecoveryVault/ArmTemplates/custom"
+      exit
    }
    Default {
       Write-Host "Incorrect value, exiting, bye" -ForegroundColor Red
