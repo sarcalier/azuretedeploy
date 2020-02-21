@@ -18,7 +18,7 @@
     },
     "scheduleRunTimes": {
       "type": "array",
-      "defaultValue": ["17:00"],
+      "defaultValue": ["19:00"],
       "metadata": {
         "description": "Times in day when backup should be triggered. e.g. 01:00 or 13:00. Must be an array, however for IaaS VMs only one value is valid. This will be used in LTR too for daily, weekly, monthly and yearly backup."
       }
