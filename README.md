@@ -1,4 +1,4 @@
-# Azure Automated deployment tools*
+# Azure Automated deployment tools
 
 
 **Deploy Recovery Service Vault to Azure:**  
