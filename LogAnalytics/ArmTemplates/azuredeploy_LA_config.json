@@ -244,7 +244,7 @@
         },
         "actionGrp": {
             "ActionGroup": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','microsoft.insights/actiongroups/', parameters('actionGroupName'))]",
-            "Subject": "[concat('VM heartbeats lost for : ',parameters('vmName'))]"
+            "Subject": "[concat('VM heartbeats lost for : ','sampleVM')]"
         },
         "automationAccountID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
         "runbookScriptUri": "https://raw.githubusercontent.com/zhjuve/designpatterns/master/001-vmrebuilddata/runbook.ps1",
@@ -302,7 +302,7 @@
                 "description": "[variables('alertDescr')]",
                 "enabled": "[variables('alertStatus')]",
                 "source": {
-                    "query": "[concat('Heartbeat | where VMUUID contains substring(\"',reference(variables('vmresID'), '2017-03-30').VmId,'\",19,17)//',resourceGroup().name,'//',reference(variables('vmresID'), '2017-03-30').VmId,'//',reference(variables('vmresID'), '2017-03-30').VmId)]",
+                    "query": "[concat('Heartbeat | where VMUUID contains sampleVMid')]",
                     "authorizedResources": "[concat(array(variables('alertSource').Resource1))]",
                     "dataSourceId": "[variables('alertSource').SourceId]",
                     "queryType": "[variables('alertSource').Type]"
@@ -395,10 +395,7 @@
         "webhookURI": {
             "type": "string",
             "value": "[variables('webhookURI')]"
-        },
-        "VMUUID": {
-            "type": "string",
-            "value": "[reference(variables('vmresID'), '2017-03-30').VmId]"
         }
+
     }
 }
