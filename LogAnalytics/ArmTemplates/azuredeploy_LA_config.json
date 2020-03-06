@@ -220,72 +220,6 @@
             }
         }
     },
-    "variables": {
-        "nicName": "[concat(parameters('vmName'), '-nic')]",
-        "linuxConfiguration": {
-            "disablePasswordAuthentication": true,
-            "ssh": {
-                "publicKeys": [
-                    {
-                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-                        "keyData": "[parameters('adminPasswordOrKey')]"
-                    }
-                ]
-            }
-        },
-        "workspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
-        "vmresID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Compute/virtualmachines/', parameters('vmName'))]",
-        "alertName": "[parameters('logSearchAlertRuleName')]",
-        "alertDescr": "Sample log search alert",
-        "alertStatus": "true",
-        "alertSource": {
-            "Resource1": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
-            "SourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
-            "Type": "ResultCount"
-        },
-        "alertSchedule": {
-            "Frequency": 5,
-            "Time": 5
-        },
-        "alertActions": {
-            "SeverityLevel": "1",
-            "SuppressTimeinMin": 5
-        },
-        "alertTrigger": {
-            "Operator": "LessThan",
-            "Threshold": "1"
-        },
-        "actionGrp": {
-            "ActionGroup": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','microsoft.insights/actiongroups/', parameters('actionGroupName'))]",
-            "Subject": "[concat('VM heartbeats lost for : ',parameters('vmName'))]"
-        },
-        "automationAccountID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
-        "runbookScriptUri": "https://raw.githubusercontent.com/zhjuve/designpatterns/master/001-vmrebuilddata/runbook.ps1",
-        "webhookURI": "nouri",
-        "webhookRRB": "AlertForRebuildRunbook",
-        "AzureRM.Profile": {
-            "name": "AzureRm.Profile",
-            "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.profile.5.8.3.nupkg"
-        },
-        "psModules": [
-            {
-                "name": "AzureRM.Compute",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.compute.5.9.1.nupkg"
-            },
-            {
-                "name": "AzureRM.Insights",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.insights.5.1.5.nupkg"
-            },
-            {
-                "name": "AzureRm.Resources",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.resources.6.7.3.nupkg"
-            },
-            {
-                "name": "AzureRm.Automation",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.automation.6.1.1.nupkg"
-            }
-        ]
-    },
     "resources": [
         {
             "comments": "provision the AzureRM.Profile module first since others are dependent on it",
@@ -363,7 +297,7 @@
         },
 
         {
-            "name": "[concat(variables('alertName'),'--',resourceGroup().name,'--',parameters('vmName'),'--',parameters('alertGUID'))]",
+            "name": "[concat(variables('alertName'),'--',resourceGroup().name,'--','sampleVM','--',parameters('alertGUID'))]",
             "type": "Microsoft.Insights/scheduledQueryRules",
             "apiVersion": "2018-04-16",
             "location": "[parameters('location')]",
@@ -461,67 +395,6 @@
             "kind": "Storage",
             "sku": {
                 "name": "[parameters('storageAccountType')]"
-            }
-        },
-        {
-            "condition": "[equals(parameters('vmNewOrExisting'), 'new')]",
-            "apiVersion": "2017-03-30",
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('vmName')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[parameters('storageAccountName')]",
-                "[variables('nicName')]"
-            ],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[parameters('vmName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPasswordOrKey')]",
-                    "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "Canonical",
-                        "offer": "UbuntuServer",
-                        "sku": "16.04-LTS",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "caching": "ReadWrite",
-                        "createOption": "FromImage"
-                    },
-                    "dataDisks": [
-                        {
-                            "name": "[concat(parameters('vmName'), '_Data1')]",
-                            "diskSizeGB": "[parameters('DataDisk1Size')]",
-                            "lun": 0,
-                            "createOption": "Empty"
-                        },
-                        {
-                            "name": "[concat(parameters('vmName'), '_Data2')]",
-                            "diskSizeGB": "[parameters('DataDisk2Size')]",
-                            "lun": 1,
-                            "createOption": "Empty"
-                        }
-                    ]
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
-                        }
-                    ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[reference(resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2017-06-01').primaryEndpoints.blob]"
-                    }
-                }
             }
         }
     ],
