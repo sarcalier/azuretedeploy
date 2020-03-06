@@ -220,46 +220,39 @@
             }
         }
     },
-    "resources": [
-        {
-            "comments": "provision the AzureRM.Profile module first since others are dependent on it",
-            "condition": "[equals(parameters('aaNewOrExisting'), 'new')]",
-            "name": "[concat(parameters('automationAccountName'), '/', variables('AzureRM.Profile').name)]",
-            "type": "Microsoft.Automation/automationAccounts/modules",
-            "apiVersion": "2015-10-31",
-            "tags": {
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
-            ],
-            "properties": {
-                "contentLink": {
-                    "uri": "[variables('AzureRM.Profile').url]"
-                }
-            }
+    "variables": {
+        "workspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+        "alertName": "[parameters('logSearchAlertRuleName')]",
+        "alertDescr": "Sample log search alert",
+        "alertStatus": "true",
+        "alertSource": {
+            "Resource1": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+            "SourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+            "Type": "ResultCount"
         },
-        {
-            "condition": "[equals(parameters('aaNewOrExisting'), 'new')]",
-            "name": "[concat(parameters('automationAccountName'), '/', variables('psModules')[copyIndex()].name)]",
-            "type": "Microsoft.Automation/automationAccounts/modules",
-            "apiVersion": "2015-10-31",
-            "tags": {
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
-                "[variables('AzureRM.Profile').name]"
-            ],
-            "copy": {
-                "name": "modulesLoop",
-                "count": "[length(variables('psModules'))]"
-            },
-            "properties": {
-                "contentLink": {
-                    "uri": "[variables('psModules')[copyIndex()].url]"
-                }
-            }
+        "alertSchedule": {
+            "Frequency": 5,
+            "Time": 5
         },
+        "alertActions": {
+            "SeverityLevel": "1",
+            "SuppressTimeinMin": 5
+        },
+        "alertTrigger": {
+            "Operator": "LessThan",
+            "Threshold": "1"
+        },
+        "actionGrp": {
+            "ActionGroup": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','microsoft.insights/actiongroups/', parameters('actionGroupName'))]",
+            "Subject": "[concat('VM heartbeats lost for : ',parameters('vmName'))]"
+        },
+        "automationAccountID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
+        "runbookScriptUri": "https://raw.githubusercontent.com/zhjuve/designpatterns/master/001-vmrebuilddata/runbook.ps1",
+        "webhookURI": "nouri",
+        "webhookRRB": "AlertForRebuildRunbook"
+    },
 
+    "resources": [
         {
             "condition": "[equals(parameters('aaNewOrExisting'), 'new')]",
             "name": "[concat(parameters('automationAccountName'), '/', parameters('rebuildRunBookName'))]",
