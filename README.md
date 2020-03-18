@@ -23,3 +23,7 @@
 
 **Deploy RSV Daily Backup:**  
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsarcalier%2Fazuretedeploy%2Fdev%2FRecoveryVault%2FArmTemplates%2Fbutton%2Fazuredeploy.json)
+
+
+**Deploy RSV Weekly Backup:**  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsarcalier%2Fazuretedeploy%2Fdev%2FRecoveryVault%2FArmTemplates%2Fbutton%2Fazuredeploy_weekly.json)
