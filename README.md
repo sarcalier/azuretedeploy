@@ -19,3 +19,7 @@
 
 **Deploy Azure Log Analytics configuration:**  
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsarcalier%2Fazuretedeploy%2Fdev%2FLogAnalytics%2FArmTemplates%2Fazuredeploy_LA_config.json)
+
+
+**Deploy RSV Daily Backup:**  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsarcalier%2Fazuretedeploy%2Fdev%2FRecoveryVault%2FArmTemplates%2Fauto%2Fazuredeploy_daily.json)
