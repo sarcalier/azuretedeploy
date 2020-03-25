@@ -136,7 +136,7 @@ switch ($RsvBkpPlan) {
    }
    '3' {
       Write-Host "Redirecting to customizable deployment" -ForegroundColor Cyan
-      Start-Process "https://azuredeploy.net/?repository=https://github.com/sarcalier/azuretedeploy/tree/master/RecoveryVault/ArmTemplates/custom/daily"
+      Start-Process "https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fsarcalier%2Fazuretedeploy%2Fdev%2FRecoveryVault%2FArmTemplates%2Fbutton%2Fazuredeploy.json"
       exit
    }
    Default {
