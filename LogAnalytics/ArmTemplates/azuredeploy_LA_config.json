@@ -1,0 +1,401 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location to for the resources."
+            }
+        },
+        "storageNewOrExisting": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Determines whether or not a new diagnostic storage account should be provisioned."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "defaultValue": "[concat('storage', uniqueString(resourceGroup().id))]",
+            "metadata": {
+                "description": "Name of the storage account"
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "metadata": {
+                "description": "Storage account type"
+            }
+        },
+        "storageAccountResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Name of the resource group for the existing storage account"
+            }
+        },
+        "workspaceNewOrExisting": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Determines whether or not a new storage account should be provisioned."
+            }
+        },
+        "workspaceName": {
+            "type": "String",
+            "defaultValue": "LA-WE-HeartBeatWorkspace2",
+            "metadata": {
+                "description": "Specifies the name of the workspace."
+            }
+        },
+        "workspaceResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Name of the resource group for the existing workspace name"
+            }
+        },
+        "workspaceRegion": {
+            "type": "String",
+            "defaultValue": "[resourceGroup().location]",
+            "allowedValues": [
+                "[resourceGroup().location]",
+                "australiacentral",
+                "australiaeast",
+                "australiasoutheast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ],
+            "metadata": {
+                "description": "Specifies the location in which to create the workspace."
+            }
+        },
+        "workspacePricingTier": {
+            "type": "string",
+            "allowedValues": [
+                "PerGB2018",
+                "Free",
+                "Standalone",
+                "PerNode",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "PerGB2018",
+            "metadata": {
+                "description": "Pricing tier: PerGB2018 or legacy tiers (Free, Standalone, PerNode, Standard or Premium) which are not available to all customers."
+            }
+        },
+        "actionGroupName": {
+            "type": "string",
+            "defaultValue": "AG-RebuildRunBookData",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name for the Action group."
+            }
+        },
+        "actionGroupShortName": {
+            "type": "string",
+            "defaultValue": "AG-RRBD",
+            "minLength": 1,
+            "maxLength": 12,
+            "metadata": {
+                "description": "Short name for the Action group."
+            }
+        },
+        "emailAddress": {
+            "type": "string",
+            "defaultValue": "vmadmin@server.com",
+            "metadata": {
+                "description": "Email address."
+            }
+        },
+        "logSearchAlertRuleName": {
+            "type": "string",
+            "defaultValue": "AR-HeartbeatsLostWithData",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name for the log search alert rule."
+            }
+        },
+        "aaNewOrExisting": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Determines whether or not a new Automation Account should be provisioned."
+            }
+        },
+        "automationAccountName": {
+            "type": "string",
+            "defaultValue": "AA-WE-RebuildableVMRunbooks2",
+            "metadata": {
+                "description": "Provide the name of Automation Account"
+            }
+        },
+        "rebuildRunBookName": {
+            "type": "string",
+            "defaultValue": "RebuildRunbookWithData",
+            "metadata": {
+                "description": "Provide the name of rebuild runbook"
+            }
+        },
+        "automationResourceGroupName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Name of the resource group for the automation account"
+            }
+        },
+        "automationRegion": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "allowedValues": [
+                "[resourceGroup().location]",
+                "australiacentral",
+                "australiaeast",
+                "australiasoutheast",
+                "brazilsouth",
+                "canadacentral",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "japaneast",
+                "koreacentral",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southcentralus",
+                "southeastasia",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westus",
+                "westus2"
+            ],
+            "metadata": {
+                "description": "Location of the  Automation Account."
+            }
+        },
+        "automationAccountPricingTier": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Basic"
+            ],
+            "defaultValue": "Basic",
+            "metadata": {
+                "description": "Pricing tier: Free or Basic"
+            }
+        },
+        "alertGUID": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+                "description": "GUID for new alert, DO NOT CHANGE"
+            }
+        }
+    },
+    "variables": {
+        "workspaceID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+        "alertName": "[parameters('logSearchAlertRuleName')]",
+        "alertDescr": "Sample log search alert",
+        "alertStatus": "true",
+        "alertSource": {
+            "Resource1": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+            "SourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+            "Type": "ResultCount"
+        },
+        "alertSchedule": {
+            "Frequency": 5,
+            "Time": 5
+        },
+        "alertActions": {
+            "SeverityLevel": "1",
+            "SuppressTimeinMin": 5
+        },
+        "alertTrigger": {
+            "Operator": "LessThan",
+            "Threshold": "1"
+        },
+        "actionGrp": {
+            "ActionGroup": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','microsoft.insights/actiongroups/', parameters('actionGroupName'))]",
+            "Subject": "[concat('VM heartbeats lost for : ','sampleVM')]"
+        },
+        "automationAccountID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',parameters('workspaceResourceGroupName'), '/providers/','Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]",
+        "runbookScriptUri": "https://raw.githubusercontent.com/zhjuve/designpatterns/master/001-vmrebuilddata/runbook.ps1",
+        "webhookURI": "nouri",
+        "webhookRRB": "AlertForRebuildRunbook"
+    },
+
+    "resources": [
+        {
+            "condition": "[equals(parameters('aaNewOrExisting'), 'new')]",
+            "name": "[concat(parameters('automationAccountName'), '/', parameters('rebuildRunBookName'))]",
+            "type": "Microsoft.Automation/automationAccounts/runbooks",
+            "location": "[parameters('automationRegion')]",
+            "apiVersion": "2015-10-31",
+            "dependsOn": [
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))]"
+            ],
+            "properties": {
+                "runbookType": "PowerShell",
+                "logProgress": false,
+                "logVerbose": false,
+                "state": "Published",
+                "description": "Rebuild VM runbook",
+                "publishContentLink": {
+                    "uri": "[variables('runbookScriptUri')]",
+                    "version": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('aaNewOrExisting'), 'new')]",
+            "name": "[parameters('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-10-31",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('automationAccountPricingTier')]"
+                }
+            },
+            "location": "[parameters('automationRegion')]",
+            "tags": {
+            }
+        },
+
+        {
+            "name": "[concat(variables('alertName'),'--',resourceGroup().name,'--','sampleVM','--',parameters('alertGUID'))]",
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[parameters('workspaceName')]",
+                "[parameters('actionGroupName')]"
+            ],
+            "properties": {
+                "description": "[variables('alertDescr')]",
+                "enabled": "[variables('alertStatus')]",
+                "source": {
+                    "query": "[concat('Heartbeat | where VMUUID contains sampleVMid')]",
+                    "authorizedResources": "[concat(array(variables('alertSource').Resource1))]",
+                    "dataSourceId": "[variables('alertSource').SourceId]",
+                    "queryType": "[variables('alertSource').Type]"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[variables('alertSchedule').Frequency]",
+                    "timeWindowInMinutes": "[variables('alertSchedule').Time]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[variables('alertActions').SeverityLevel]",
+                    "throttlingInMin": "[variables('alertActions').SuppressTimeinMin]",
+                    "aznsAction": {
+                        "actionGroup": "[array(variables('actionGrp').ActionGroup)]",
+                        "emailSubject": "[variables('actionGrp').Subject]"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "[variables('alertTrigger').Operator]",
+                        "threshold": "[variables('alertTrigger').Threshold]"
+                    }
+                }
+            }
+        },
+
+        {
+            "type": "Microsoft.Insights/actionGroups",
+            "apiVersion": "2017-04-01",
+            "condition": "[equals(parameters('aaNewOrExisting'), 'new')]",
+            "name": "[parameters('actionGroupName')]",
+            "location": "Global",
+            "properties": {
+                "groupShortName": "[parameters('actionGroupShortName')]",
+                "enabled": true,
+                "emailReceivers": [
+                    {
+                        "name": "emailReceiver",
+                        "emailAddress": "[parameters('emailAddress')]"
+                    }
+                ],
+                "smsReceivers": [
+                ],
+                "webhookReceivers": [
+                ],
+                "itsmReceivers": [
+                ],
+                "azureAppPushReceivers": [
+                ],
+                "automationRunbookReceivers": [
+
+
+                ],
+                "voiceReceivers": [
+                ],
+                "logicAppReceivers": [
+                ],
+                "azureFunctionReceivers": [
+                ],
+                "armRoleReceivers": [
+                ]
+            }
+        },
+        {
+            "condition": "[equals(parameters('workspaceNewOrExisting'), 'new')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[parameters('workspaceName')]",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceRegion')]",
+            "properties": {
+                "features": {
+                    "searchVersion": 1
+                }
+            },
+            "sku": {
+                "name": "[parameters('workspacePricingTier')]"
+            }
+        },
+        {
+            "condition": "[equals(parameters('storageNewOrExisting'), 'new')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-06-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "kind": "Storage",
+            "sku": {
+                "name": "[parameters('storageAccountType')]"
+            }
+        }
+    ],
+    "outputs": {
+        "webhookURI": {
+            "type": "string",
+            "value": "[variables('webhookURI')]"
+        }
+
+    }
+}
