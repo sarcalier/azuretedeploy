@@ -15,6 +15,9 @@ variable "prefix" {
   default = "vm01"
 }
 
+locals {
+  AdminUserName = "tstadmin"
+}
 
 resource "azurerm_resource_group" "main" {
   name     = "RuslanG-RG-TerraformAuto"
@@ -59,6 +62,14 @@ resource "random_string" "token2" {
   lower   = true
   number  = true
   special = false
+}
+
+resource "random_string" "pass1" {
+  length  = 16
+  upper   = true
+  lower   = true
+  number  = true
+  special = true
 }
 
 locals {
@@ -265,8 +276,8 @@ resource "azurerm_virtual_machine" "main" {
   }
   os_profile {
     computer_name  = "procmonvm"
-    admin_username = "testadmin"
-    admin_password = "Passw#or0d1234!"
+    admin_username = local.AdminUserName
+    admin_password = random_string.pass1.result
   }
   os_profile_linux_config {
     disable_password_authentication = false
@@ -529,4 +540,21 @@ resource "azurerm_virtual_machine_extension" "main" {
     }
   SETTINGS
   depends_on = [azurerm_virtual_machine.main]
+}
+
+
+output "VmPublicIP" {
+  value = azurerm_public_ip.main.ip_address
+}
+
+output "VmPublicFQDN" {
+  value = "${azurerm_public_ip.main.fqdn}"
+}
+
+output "VMAdminUserName" {
+  value = local.AdminUserName
+}
+
+output "VMAdminPassword" {
+  value = random_string.pass1.result
 }
