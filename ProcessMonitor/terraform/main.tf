@@ -12,7 +12,7 @@ provider "azurerm" {
 
 
 variable "prefix" {
-  default = "vm01"
+  default = "PMvm03"
 }
 
 locals {
@@ -20,7 +20,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "main" {
-  name     = "RuslanG-RG-TerraformAuto"
+  name     = "${var.prefix}-TerraformAuto"
   location = "westeurope"
 }
 
@@ -543,12 +543,17 @@ resource "azurerm_virtual_machine_extension" "main" {
 }
 
 
+data "azurerm_public_ip" "main" {
+  name                = azurerm_public_ip.main.name
+  resource_group_name = azurerm_virtual_machine.main.resource_group_name
+}
+
 output "VmPublicIP" {
-  value = azurerm_public_ip.main.ip_address
+  value = data.azurerm_public_ip.main.ip_address
 }
 
 output "VmPublicFQDN" {
-  value = "${azurerm_public_ip.main.fqdn}"
+  value = azurerm_public_ip.main.fqdn
 }
 
 output "VMAdminUserName" {
