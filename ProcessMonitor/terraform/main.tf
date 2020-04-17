@@ -12,7 +12,7 @@ provider "azurerm" {
 
 
 variable "prefix" {
-  default = "PMvm03"
+  default = "ProcMon01"
 }
 
 locals {
