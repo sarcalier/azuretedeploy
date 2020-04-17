@@ -12,7 +12,7 @@ provider "azurerm" {
 
 
 variable "prefix" {
-  default = "ProcMon01"
+  #default = "ProcMon01"
 }
 
 locals {
@@ -157,7 +157,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "main" {
   # Count all requests with server error result code grouped into 5-minute bins
   query       = <<-QUERY
   VMBoundPort
-    | where ProcessName == "nginx" and TimeGenerated > ago(10m)
+    | where ProcessName == "sshd" and TimeGenerated > ago(10m)
   QUERY
   severity    = 1
   frequency   = 5
@@ -562,4 +562,8 @@ output "VMAdminUserName" {
 
 output "VMAdminPassword" {
   value = random_string.pass1.result
+}
+
+output "VMResourceGroup" {
+  value = azurerm_resource_group.main.name
 }
