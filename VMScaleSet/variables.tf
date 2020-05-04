@@ -1,12 +1,18 @@
+variable "prefix" {
+  description = "Type in the prefix to name resources in this deployment "
+#  default = "VmssPOC"
+}
+
+
 variable "location" {
   description = "The location where resources are created"
   default     = "westeurope"
 }
 
-variable "resource_group_name" {
-  description = "The name of the resource group in which the resources are created"
-  default     = "RuslanG-RG-TerraformVMSS"
-}
+#variable "resource_group_name" {
+#  description = "The name of the resource group in which the resources are created"
+#  default     = "RuslanG-RG-TerraformVMSS"
+#}
 
 
 variable "application_port" {
@@ -14,15 +20,8 @@ variable "application_port" {
     default     = 80
 }
 
-variable "admin_password" {
-    description = "Default password for admin"
-    default = "Passwwoord###11223344"
-}
 
-variable "prefix" {
-  description = "Mostly used for VMSS domain naim"
-  default = "VmssPOC"
-}
+
 
 variable "TimeZone" {
   default = "Russian Standard Time"
@@ -38,10 +37,4 @@ variable "WorkingHours" {
 #    condition     = can(regex("1-3", var.WorkingHours))
 #    error_message = "The input value must be in between 1-3."
 #  }
-}
-
-variable "StartHour" {
-  type        = number
-  default =   9
-  description = ""
 }

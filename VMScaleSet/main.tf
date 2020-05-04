@@ -13,18 +13,12 @@ resource "random_string" "token1" {
   special = false
 }
 
-#locals {
-#  StartingHourCalc = "${var.WorkingHours == 1 ? var.StartHour : [8]}"
-#}
+
 
 
 resource "azurerm_resource_group" "vmss" {
-  name     = var.resource_group_name
+  name     = "${var.prefix}-TerraformVMSS"
   location = var.location
-
-#  tags {
-#    environment = "codelab"
-#  }
 }
 
 resource "azurerm_virtual_network" "vmss" {
@@ -33,9 +27,6 @@ resource "azurerm_virtual_network" "vmss" {
   location            = var.location
   resource_group_name = azurerm_resource_group.vmss.name
 
-  #tags {
-  #  environment = "codelab"
-#  }
 }
 
 resource "azurerm_subnet" "vmss" {
@@ -256,18 +247,6 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   #  }
   }
 
-#  network_profile {
-#    name    = "terraformnetworkprofile"
-#    primary = true
-#
-#    ip_configuration {
-#      name                                   = "TestIPConfiguration"
-#      primary                                = true
-#      subnet_id                              = azurerm_subnet.example.id
-#      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
-#      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.lbnatpool.id]
-#    }
-#  }
 
 
   network_profile {
@@ -320,7 +299,8 @@ resource "azurerm_monitor_autoscale_setting" "vmss" {
   resource_group_name = azurerm_resource_group.vmss.name
   location            = azurerm_resource_group.vmss.location
   target_resource_id  = azurerm_virtual_machine_scale_set.vmss.id
-
+  depends_on          = [azurerm_virtual_machine_scale_set.vmss]
+  
   profile {
     name = "Working Hours"
 
