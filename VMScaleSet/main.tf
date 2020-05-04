@@ -83,7 +83,7 @@ resource "azurerm_lb_probe" "vmss" {
   resource_group_name = azurerm_resource_group.vmss.name
   loadbalancer_id     = azurerm_lb.vmss.id
   name                = "ssh-running-probe"
-  port                = var.application_port
+  port                = 22
 }
 
 resource "azurerm_lb_rule" "lbnatrule" {
@@ -95,7 +95,7 @@ resource "azurerm_lb_rule" "lbnatrule" {
   backend_port                   = var.application_port
   backend_address_pool_id        = azurerm_lb_backend_address_pool.bpepool.id
   frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = azurerm_lb_probe.vmss.id
+  #probe_id                       = azurerm_lb_probe.vmss.id
 }
 
 
@@ -108,7 +108,7 @@ resource "azurerm_lb_rule" "lbnatrulessh" {
   backend_port                   = "22"
   backend_address_pool_id        = azurerm_lb_backend_address_pool.bpepool.id
   frontend_ip_configuration_name = "PublicIPAddress"
-#  probe_id                       = azurerm_lb_probe.vmss.id
+  probe_id                       = azurerm_lb_probe.vmss.id
 }
 
 data "azurerm_resource_group" "image" {
@@ -120,6 +120,7 @@ data "azurerm_image" "image" {
   resource_group_name = data.azurerm_resource_group.image.name
 }
 
+/*
 resource "azurerm_virtual_machine_scale_set" "vmss" {
   name                = "vmscaleset"
   location            = var.location
@@ -179,6 +180,115 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   
 }
 
+*/
+
+locals {
+  AdminUserName = "tstadmin"
+}
+
+
+resource "random_string" "pass1" {
+  length  = 16
+  upper   = true
+  lower   = true
+  number  = true
+  special = true
+}
+
+resource "azurerm_virtual_machine_scale_set" "vmss" {
+  name                = "${lower(var.prefix)}-${random_string.token1.result}"
+  location            = azurerm_resource_group.vmss.location
+  resource_group_name = azurerm_resource_group.vmss.name
+
+  # automatic rolling upgrade
+  automatic_os_upgrade = true
+  upgrade_policy_mode  = "Rolling"
+
+  rolling_upgrade_policy {
+    max_batch_instance_percent              = 20
+    max_unhealthy_instance_percent          = 20
+    max_unhealthy_upgraded_instance_percent = 5
+    pause_time_between_batches              = "PT0S"
+  }
+
+  # required when using rolling upgrade policy
+  health_probe_id = azurerm_lb_probe.vmss.id
+
+  sku {
+    name     = "Standard_F2"
+    tier     = "Standard"
+    capacity = 3
+  }
+
+  storage_profile_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+  storage_profile_os_disk {
+    name              = ""
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  storage_profile_data_disk {
+    lun           = 0
+    caching       = "ReadWrite"
+    create_option = "Empty"
+    disk_size_gb  = 10
+  }
+
+  os_profile {
+    computer_name_prefix = "testvm"
+    admin_username        = local.AdminUserName
+    admin_password        = random_string.pass1.result
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+
+  #  ssh_keys {
+  #    path     = "/home/myadmin/.ssh/authorized_keys"
+  #    key_data = file("~/.ssh/demo_key.pub")
+  #  }
+  }
+
+#  network_profile {
+#    name    = "terraformnetworkprofile"
+#    primary = true
+#
+#    ip_configuration {
+#      name                                   = "TestIPConfiguration"
+#      primary                                = true
+#      subnet_id                              = azurerm_subnet.example.id
+#      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
+#      load_balancer_inbound_nat_rules_ids    = [azurerm_lb_nat_pool.lbnatpool.id]
+#    }
+#  }
+
+
+  network_profile {
+    name    = "terraformnetworkprofile"
+    primary = true
+
+    ip_configuration {
+      name                                   = "IPConfiguration"
+      subnet_id                              = azurerm_subnet.vmss.id
+      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
+      primary = true
+    }
+  }
+
+
+  tags = {
+    environment = "staging"
+  }
+}
+
+
 data "azurerm_public_ip" "vmss" {
   name                = azurerm_public_ip.vmss.name
   resource_group_name = azurerm_resource_group.vmss.name
@@ -197,6 +307,13 @@ output "VMResourceGroup" {
   value = azurerm_resource_group.vmss.name
 }
 
+output "VMAdminUserName" {
+  value = local.AdminUserName
+}
+
+output "VMAdminPassword" {
+  value = random_string.pass1.result
+}
 
 resource "azurerm_monitor_autoscale_setting" "vmss" {
   name                = "ScheduledAutoscaleSetting"
@@ -237,7 +354,6 @@ resource "azurerm_monitor_autoscale_setting" "vmss" {
     recurrence {
       timezone  = var.TimeZone
       days      = ["Monday","Tuesday","Wednesday","Thursday","Friday"]
-#      hours     = [8]
       hours     = [var.WorkingHours + 7]
       minutes   = [0]
 
