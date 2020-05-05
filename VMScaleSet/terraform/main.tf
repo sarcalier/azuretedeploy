@@ -112,6 +112,8 @@ data "azurerm_image" "image" {
 }
 
 /*
+
+#scale set built from Packer image
 resource "azurerm_virtual_machine_scale_set" "vmss" {
   name                = "vmscaleset"
   location            = var.location
