@@ -24,7 +24,7 @@ variable "application_port" {
 
 
 variable "TimeZone" {
-  default = "Russian Standard Time"
+#  default = "Russian Standard Time"
   description = "Time Zone to define Working Hours"
 }
 
