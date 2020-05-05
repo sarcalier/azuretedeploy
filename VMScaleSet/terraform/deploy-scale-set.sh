@@ -16,3 +16,9 @@ cd "$CLIENT_BUILD_DIR"
 echo "Downloading the terraform manifest"
 wget -q https://raw.githubusercontent.com/sarcalier/azuretedeploy/dev/VMScaleSet/terraform/variables.tf -O variables.tf
 wget -q https://raw.githubusercontent.com/sarcalier/azuretedeploy/dev/VMScaleSet/terraform/main.tf -O main.tf
+
+
+#playing the manifest
+echo "Running the terraform manifest"
+terraform init
+terraform apply
