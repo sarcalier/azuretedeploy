@@ -10,7 +10,9 @@ if [ ! -d "$CLIENT_BUILD_DIR" ]
 fi
 
 #CDing to the dir
-(
 cd "$CLIENT_BUILD_DIR"
-)
-echo $(pwd)
+
+#downloading manifests
+echo "Downloading the terraform manifest"
+wget -q https://raw.githubusercontent.com/sarcalier/azuretedeploy/dev/VMScaleSet/terraform/variables.tf -O variables.tf
+wget -q https://raw.githubusercontent.com/sarcalier/azuretedeploy/dev/VMScaleSet/terraform/main.tf -O main.tf
