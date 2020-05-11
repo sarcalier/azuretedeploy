@@ -102,6 +102,8 @@ resource "azurerm_lb_rule" "lbnatrulessh" {
   probe_id                       = azurerm_lb_probe.vmss.id
 }
 
+/*
+
 data "azurerm_resource_group" "image" {
   name = "RuslanG-RG-Terraforming"
 }
@@ -111,7 +113,7 @@ data "azurerm_image" "image" {
   resource_group_name = data.azurerm_resource_group.image.name
 }
 
-/*
+
 
 #scale set built from Packer image
 resource "azurerm_virtual_machine_scale_set" "vmss" {
