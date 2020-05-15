@@ -157,7 +157,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "main" {
   # Count all requests with server error result code grouped into 5-minute bins
   query       = <<-QUERY
   VMBoundPort
-    | where ProcessName == "sshd" and TimeGenerated > ago(10m)
+    | where ProcessName == "sshd" and TimeGenerated > ago(2m)
   QUERY
   severity    = 1
   frequency   = 5
