@@ -21,3 +21,18 @@ resource "azurerm_shared_image_gallery" "sig" {
   location            = azurerm_resource_group.vmsspatchrg.location
   description         = "Shared VM images"
 }
+
+
+resource "azurerm_shared_image" "vmssimg" {
+  name                = "ubuntu_nginx"
+  gallery_name        = azurerm_shared_image_gallery.sig.name
+  resource_group_name = azurerm_resource_group.vmsspatchrg.name
+  location            = azurerm_resource_group.vmsspatchrg.location
+  os_type             = "Linux"
+
+  identifier {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+  }
+}
