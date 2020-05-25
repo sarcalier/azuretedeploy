@@ -44,7 +44,7 @@ locals {
 data "azurerm_shared_image_version" "first" {
   name                = "1.0.0"
   image_name          = "ubuntu_nginx"
-  gallery_name        = "vmss_sig"
+  gallery_name        = "vmss_imgal"
   resource_group_name = var.imgRGname
 }
 

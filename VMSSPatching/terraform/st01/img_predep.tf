@@ -17,7 +17,7 @@ resource "azurerm_resource_group" "vmsspatchimgrg" {
 
 
 resource "azurerm_shared_image_gallery" "sig" {
-  name                = "vmss_sig"
+  name                = "vmss_imgal"
   resource_group_name = azurerm_resource_group.vmsspatchimgrg.name
   location            = azurerm_resource_group.vmsspatchimgrg.location
   description         = "Shared VM images"
