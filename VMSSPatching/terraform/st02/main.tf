@@ -12,7 +12,7 @@ variable "prefix" {
 
 variable "imgRGname" {
   description = "Where the images lie"
-  default = "RuslanG-RG-VmssPatchPoc"
+  default = "RuslanG-RG-VmssPatchPocImg"
 }
 
 resource "azurerm_resource_group" "vmsspatchrg" {
@@ -191,6 +191,12 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   
 }
 
+
+data "azurerm_public_ip" "vmss" {
+  name                = azurerm_public_ip.vmss.name
+  resource_group_name = azurerm_resource_group.vmsspatchrg.name
+}
+
 output "VmssPublicIP" {
   value = data.azurerm_public_ip.vmss.ip_address
 }
@@ -200,7 +206,7 @@ output "VmssPublicFQDN" {
 }
 
 output "VMResourceGroup" {
-  value = azurerm_resource_group.vmss.name
+  value = azurerm_resource_group.vmsspatchrg.name
 }
 
 output "VMAdminUserName" {
