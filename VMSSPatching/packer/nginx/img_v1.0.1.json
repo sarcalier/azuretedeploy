@@ -1,0 +1,54 @@
+{
+    "builders": [{
+      "type": "azure-arm",
+  
+      "client_id": "",
+      "client_secret": "",
+      "tenant_id": "",
+      "subscription_id": "",
+  
+      "managed_image_resource_group_name": "imgResourceGroup",
+      "managed_image_name": "VmssImgUbuntu_v101",
+  
+      "os_type": "Linux",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
+      
+      "shared_image_gallery_destination": {
+        "resource_group": "imgResourceGroup",
+        "gallery_name": "vmss_imgal",
+        "image_name": "ubuntu_nginx",
+        "image_version": "1.0.1",
+        "replication_regions": [
+            "westeurope"
+        ]
+      },
+
+
+      "azure_tags": {
+          "dept": "Engineering",
+          "task": "Image deployment"
+      },
+  
+      "location": "westeurope",
+      "vm_size": "Standard_DS2_v2"
+
+
+
+      
+    }],
+    "provisioners": [{
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "apt-get update",
+        "apt-get upgrade -y",
+        "apt-get -y install nginx",
+        "wget -q https://raw.githubusercontent.com/sarcalier/azuretedeploy/dev/VMSSPatching/packer/nginx/index.nginx-debian_v101.html -O /var/www/html/index.nginx-debian.html",
+  
+        "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      ],
+      "inline_shebang": "/bin/sh -x",
+      "type": "shell"
+    }]
+  }
