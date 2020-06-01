@@ -8,7 +8,7 @@ provider "azurerm" {
 
 variable "prefix" {
   description = "Type in the prefix to name resources in this deployment "
-  default = "RuslanG-RG"
+#  default = "RuslanG-RG"
 }
 
 data "azurerm_resource_group" "vmsspatchrg" {
