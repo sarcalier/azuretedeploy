@@ -39,7 +39,7 @@ data "azurerm_shared_image_version" "second" {
   name                = "1.0.1"
   image_name          = "ubuntu_nginx"
   gallery_name        = "vmss_imgal"
-  resource_group_name = "${var.prefix}-VmssPatchPocImg"
+  resource_group_name = "imgResourceGroup"
 }
 
 
