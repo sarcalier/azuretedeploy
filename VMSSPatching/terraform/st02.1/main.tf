@@ -7,12 +7,12 @@ provider "azurerm" {
 
 variable "prefix" {
   description = "Type in the prefix to name resources in this deployment "
-  default = "RuslanG-RG"
+#  default = "RuslanG-RG"
 }
 
 variable "imgRGname" {
   description = "Where the images lie"
-  default = "RuslanG-RG-VmssPatchPocImg"
+  default = "imgResourceGroup"
 }
 
 resource "azurerm_resource_group" "vmsspatchrg" {
