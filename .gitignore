@@ -1,0 +1,4 @@
+IaCs/terraform/s2/.terraform/plugins/windows_amd64/lock.json
+IaCs/terraform/s2/.terraform/plugins/windows_amd64/terraform-provider-azurerm_v2.17.0_x5.exe
+IaCs/terraform/s2/.terraform/plugins/windows_amd64/terraform-provider-random_v2.2.1_x4.exe
+IaCs/terraform/s2/terraform.tfstate
