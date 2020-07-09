@@ -11,7 +11,7 @@ variable "prefix" {
 }
 
 resource "azurerm_resource_group" "main" {
-  name     = "${var.prefix}-IaCs-tf-s2"
+  name     = "${var.prefix}-IaCs-tf-s02"
   location = "West Europe"
 }
 
@@ -49,7 +49,7 @@ resource "azurerm_public_ip" "main" {
 }
 
 resource "azurerm_lb" "main" {
-  name                = "vmss-lb"
+  name                = "web-lb"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   sku                 = "Standard"
@@ -163,6 +163,31 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
+resource "azurerm_network_interface" "main2" {
+  name                = "${var.prefix}-nic2"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                          = "testconfiguration2"
+    subnet_id                     = azurerm_subnet.sub02.id
+    private_ip_address_allocation = "Dynamic"
+#    public_ip_address_id          = azurerm_public_ip.main.id
+  }
+}
+
+
+resource "azurerm_network_interface_backend_address_pool_association" "asso_1" {
+  network_interface_id    = azurerm_network_interface.main.id
+  ip_configuration_name   = "testconfiguration1"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.bpepool.id
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "asso_2" {
+  network_interface_id    = azurerm_network_interface.main2.id
+  ip_configuration_name   = "testconfiguration2"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.bpepool.id
+}
 
 resource "random_string" "pass1" {
   length  = 16
@@ -185,11 +210,6 @@ resource "azurerm_virtual_machine" "main" {
   vm_size               = "Standard_DS1_v2"
   zones                 = [1]
 
-  # Uncomment this line to delete the OS disk automatically when deleting the VM
-  # delete_os_disk_on_termination = true
-
-  # Uncomment this line to delete the data disks automatically when deleting the VM
-  # delete_data_disks_on_termination = true
 
   storage_image_reference {
     publisher = "Canonical"
@@ -231,4 +251,56 @@ resource "azurerm_virtual_machine_extension" "main" {
     }
   SETTINGS
   depends_on = [azurerm_virtual_machine.main]
+}
+
+
+resource "azurerm_virtual_machine" "main2" {
+  name                  = "${var.prefix}-vm02"
+  location              = azurerm_resource_group.main.location
+  resource_group_name   = azurerm_resource_group.main.name
+  network_interface_ids = [azurerm_network_interface.main2.id]
+  vm_size               = "Standard_DS1_v2"
+  zones                 = [2]
+
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+  storage_os_disk {
+    name              = "myosdisk2"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+  os_profile {
+    computer_name  = "vm02"
+    admin_username = local.AdminUserName
+    admin_password = random_string.pass1.result
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+  tags = {
+    environment = "staging"
+  }
+}
+
+
+
+resource "azurerm_virtual_machine_extension" "main2" {
+  name                 = "nginx"
+  virtual_machine_id   = azurerm_virtual_machine.main2.id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  settings = <<SETTINGS
+    {
+        "commandToExecute": "apt-get update && apt-get install -y nginx "
+    }
+  SETTINGS
+  depends_on = [azurerm_virtual_machine.main2]
 }
