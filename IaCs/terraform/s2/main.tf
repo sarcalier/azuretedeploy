@@ -28,14 +28,16 @@ resource "azurerm_subnet" "sub01" {
   name                 = "subnet01"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes       = ["10.10.4.0/24"]
+  address_prefixes     = ["10.10.4.0/24"]
+  service_endpoints    = ["Microsoft.Sql"]
 }
 
 resource "azurerm_subnet" "sub02" {
   name                 = "subnet02"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes       = ["10.10.5.0/24"]
+  address_prefixes     = ["10.10.5.0/24"]
+  service_endpoints    = ["Microsoft.Sql"]
 }
 
 
@@ -303,4 +305,38 @@ resource "azurerm_virtual_machine_extension" "main2" {
     }
   SETTINGS
   depends_on = [azurerm_virtual_machine.main2]
+}
+
+
+
+resource "azurerm_sql_server" "sqlserver_1" {
+  name                         = "unqiueazuresqlserver1"
+  resource_group_name          = azurerm_resource_group.main.name
+  location                     = azurerm_resource_group.main.location
+  version                      = "12.0"
+  administrator_login          = "4dm1n157r470r"
+  administrator_login_password = random_string.pass1.result
+}
+
+resource "azurerm_sql_virtual_network_rule" "sqlvnetrule1" {
+  name                = "sql-vnet-rule"
+  resource_group_name = azurerm_resource_group.main.name
+  server_name         = azurerm_sql_server.sqlserver_1.name
+  subnet_id           = azurerm_subnet.sub01.id
+}
+
+resource "azurerm_sql_server" "sqlserver_2" {
+  name                         = "unqiueazuresqlserver2"
+  resource_group_name          = azurerm_resource_group.main.name
+  location                     = azurerm_resource_group.main.location
+  version                      = "12.0"
+  administrator_login          = "4dm1n157r470r"
+  administrator_login_password = random_string.pass1.result
+}
+
+resource "azurerm_sql_virtual_network_rule" "sqlvnetrule2" {
+  name                = "sql-vnet-rule2"
+  resource_group_name = azurerm_resource_group.main.name
+  server_name         = azurerm_sql_server.sqlserver_2.name
+  subnet_id           = azurerm_subnet.sub02.id
 }
