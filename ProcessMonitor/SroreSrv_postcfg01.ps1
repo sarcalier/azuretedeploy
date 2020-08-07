@@ -37,5 +37,5 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
 Grant-CPrivilege -Identity mpreplication -Privilege "SeServiceLogonRight" 
 $service = Get-WmiObject -Class "Win32_Service" -ComputerName "localhost" -Filter "Name='SQLSERVERAGENT'"
 $service.Change($null, $null, $null, $null, $null, $null, ".\mpreplication", $WinUsrPass)
+Set-Service -Name SQLSERVERAGENT -StartupType Automatic
 Restart-Service -ServiceName "SQLSERVERAGENT" -Force
-
