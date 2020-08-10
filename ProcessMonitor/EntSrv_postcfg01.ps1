@@ -29,6 +29,14 @@ $query2 = @"
 Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
 
 
+# Adding system account once again?
+$query3 = @"
+    IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = N'NT AUTHORITY\SYSTEM' AND IS_SRVROLEMEMBER ('sysadmin', name) = 1)
+    EXEC sp_addsrvrolemember @loginame = N'NT AUTHORITY\SYSTEM', @rolename = N'sysadmin'
+"@
+Invoke-Sqlcmd -ServerInstance "localhost" -Query $query3 -Username "supausr" -Password $SqlSaPass -Verbose
+
+
 Set-Service -Name SQLSERVERAGENT -StartupType Automatic
 
 # no idea, maybe service restart would help here
