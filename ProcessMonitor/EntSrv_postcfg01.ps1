@@ -27,10 +27,13 @@ Set-Service -Name SQLSERVERAGENT -StartupType Automatic
  choco install ssrs --params "/Edition=Eval" -y --ignore-checksums
 
 
+# Wait for some time just in case
+Start-Sleep -Seconds 10
+
 
  # Configure the SSRS
  
- function Get-ConfigSet()
+function Get-ConfigSet()
 {
 	return Get-WmiObject –namespace "root\Microsoft\SqlServer\ReportServer\RS_SSRS\v14\Admin" `
 		-class MSReportServer_ConfigurationSetting -ComputerName localhost
