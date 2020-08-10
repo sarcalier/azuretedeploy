@@ -31,6 +31,9 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
 
 Set-Service -Name SQLSERVERAGENT -StartupType Automatic
 
+# no idea, maybe service restart would help here
+Restart-Service -Name 'MSSQLSERVER' -Force
+
  # Installing SSRS
  choco install ssrs --params "/Edition=Eval" -y --ignore-checksums
 
