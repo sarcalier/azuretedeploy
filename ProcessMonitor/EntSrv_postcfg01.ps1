@@ -21,14 +21,6 @@ $query = @"
 Invoke-Sqlcmd -ServerInstance "localhost" -Query $query -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
 
 
-# Adding System account to SA
-#$query2 = @"
-#    ALTER SERVER ROLE [sysadmin] ADD MEMBER [NT AUTHORITY\SYSTEM]
-#"@
-#      
-#Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
-
-
 Set-Service -Name SQLSERVERAGENT -StartupType Automatic
 
 # no idea, maybe service restart would help here
@@ -47,6 +39,14 @@ $query3 = @"
     EXEC sp_addsrvrolemember @loginame = N'NT AUTHORITY\SYSTEM', @rolename = N'sysadmin'
 "@
 Invoke-Sqlcmd -ServerInstance "localhost" -Query $query3 -Username "supausr" -Password $SqlSaPass -Verbose
+
+
+# Adding System account to SA
+$query2 = @"
+    ALTER SERVER ROLE [sysadmin] ADD MEMBER [NT AUTHORITY\SYSTEM]
+"@
+      
+Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
 
 
  # Configure the SSRS
