@@ -35,17 +35,16 @@ Start-Sleep -Seconds 10
  
 function Get-ConfigSet()
 {
-	return Get-WmiObject –namespace "root\Microsoft\SqlServer\ReportServer\RS_SSRS\v14\Admin" `
-		-class MSReportServer_ConfigurationSetting -ComputerName localhost
+	return Get-WmiObject –namespace "root\Microsoft\SqlServer\ReportServer\RS_SSRS\v14\Admin" -class MSReportServer_ConfigurationSetting -ComputerName localhost
 }
 
 # Allow importing of sqlps module
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
+#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
 
 # Retrieve the current configuration
 $configset = Get-ConfigSet
 
-$configset
+#$configset
 
 If (! $configset.IsInitialized)
 {
