@@ -21,6 +21,14 @@ $query = @"
 Invoke-Sqlcmd -ServerInstance "localhost" -Query $query -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
 
 
+# Adding System account to SA
+$query2 = @"
+    ALTER SERVER ROLE [sysadmin] ADD MEMBER [NT AUTHORITY\SYSTEM]
+"@
+      
+Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
+
+
 Set-Service -Name SQLSERVERAGENT -StartupType Automatic
 
  # Installing SSRS
@@ -38,8 +46,6 @@ function Get-ConfigSet()
 	return Get-WmiObject –namespace "root\Microsoft\SqlServer\ReportServer\RS_SSRS\v14\Admin" -class MSReportServer_ConfigurationSetting -ComputerName localhost
 }
 
-# Allow importing of sqlps module
-#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
 
 # Retrieve the current configuration
 $configset = Get-ConfigSet
