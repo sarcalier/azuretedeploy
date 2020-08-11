@@ -2,9 +2,7 @@
 
 param (
     [string]$WinUsrPass,
-	[string]$SqlSaPass,
-	[string]$WinAdmNm,
-	[string]$WinAdmPass
+	[string]$SqlSaPass
 )
 
 New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
@@ -31,6 +29,8 @@ Set-Service -Name SQLSERVERAGENT -StartupType Automatic
  # Installing SSRS
  choco install ssrs --params "/Edition=Eval" -y --ignore-checksums
 
+ #leaving part below for the pipelines...
+<#
 
 # Wait for some time just in case
 #Start-Sleep -Seconds 10
@@ -133,3 +133,6 @@ Start-Sleep 5
 	 }
  
  } -credential $loginCred -ComputerName .
+
+
+#>
