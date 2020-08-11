@@ -2,7 +2,9 @@
 
 param (
     [string]$WinUsrPass,
-	[string]$SqlSaPass
+	[string]$SqlSaPass,
+	[string]$WinAdmNm,
+    [string]$WinAdmPass
 )
 
 New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
@@ -30,7 +32,7 @@ Set-Service -Name SQLSERVERAGENT -StartupType Automatic
  choco install ssrs --params "/Edition=Eval" -y --ignore-checksums
 
  #leaving part below for the pipelines...
-<#
+
 
 # Wait for some time just in case
 #Start-Sleep -Seconds 10
@@ -52,8 +54,13 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
 
 
  # enable winrm
-winrm quickconfig -quiet
-Start-Sleep 5
+ Enable-PSRemoting -SkipNetworkProfileCheck -Force
+ Start-Sleep 5
+ 
+ Enable-WSManCredSSP -Role Server -Force
+ Enable-WSManCredSSP -Role Client -DelegateComputer * -Force
+ New-Item -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentialsWhenNTLMOnly -Force
+ New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly -Name 1 -Value * -PropertyType String
 
  # Configure the SSRS
  
@@ -64,7 +71,7 @@ Start-Sleep 5
  $loginCred = New-Object System.Management.Automation.PSCredential($usrname,$pass)
  
  
- Invoke-Command -scriptblock {
+ Invoke-Command -Authentication CredSSP -scriptblock {
 	 
 	 function Get-ConfigSet()
 		 {
@@ -132,7 +139,6 @@ Start-Sleep 5
 		 $inst.GetReportServerUrls()
 	 }
  
- } -credential $loginCred -ComputerName .
+ } -credential $loginCred -ComputerName $env:COMPUTERNAME
 
 
-#>
