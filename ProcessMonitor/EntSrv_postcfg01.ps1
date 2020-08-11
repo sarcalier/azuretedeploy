@@ -51,16 +51,19 @@ $query2 = @"
 Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Username "supausr" -Password $SqlSaPass -Verbose
 
 
+ # enable winrm
+winrm quickconfig -quiet
+
  # Configure the SSRS
  
- $usrname = $WinAdmNm
+ $usrname = ".\$WinAdmNm"
  $pass = ConvertTo-SecureString $WinAdmPass -AsPlainText -Force
  
  # Create the PSCredential object
  $loginCred = New-Object System.Management.Automation.PSCredential($usrname,$pass)
  
  
- Start-Job -scriptblock {
+ Invoke-Command -scriptblock {
 	 
 	 function Get-ConfigSet()
 		 {
@@ -128,4 +131,4 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
 		 $inst.GetReportServerUrls()
 	 }
  
- } -credential $loginCred
+ } -credential $loginCred -ComputerName .
