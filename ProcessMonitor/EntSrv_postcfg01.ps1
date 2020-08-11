@@ -53,6 +53,7 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
 
  # enable winrm
 winrm quickconfig -quiet
+Start-Sleep 5
 
  # Configure the SSRS
  
