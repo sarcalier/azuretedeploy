@@ -11,6 +11,10 @@ Enable-WindowsOptionalFeature -Online -FeatureName WAS-NetFxEnvironment -All
 #choco install sql-server-express --version=14.1801.3958.1 -y
 
 
+ # enable winrm
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+Start-Sleep 5
+
 Enable-WSManCredSSP -Role Server -Force
 Enable-WSManCredSSP -Role Client -DelegateComputer * -Force
 New-Item -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentialsWhenNTLMOnly -Force
