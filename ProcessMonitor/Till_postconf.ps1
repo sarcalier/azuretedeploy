@@ -18,4 +18,4 @@ New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDele
 
 $securePassword = ConvertTo-SecureString $WinAdmPass -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential ".\$WinAdmNm", $securePassword
-Invoke-Command -Authentication CredSSP -ScriptBlock {choco install sql-server-express --version=14.1801.3958.1 -y} -ComputerName . -Credential $credential
+Invoke-Command -Authentication CredSSP -ScriptBlock {choco install sql-server-express --version=14.1801.3958.1 -y} -ComputerName $env:COMPUTERNAME -Credential $credential
