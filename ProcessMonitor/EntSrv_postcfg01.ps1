@@ -55,6 +55,7 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
 
  # enable winrm
  Enable-PSRemoting -SkipNetworkProfileCheck -Force
+ winrm quickconfig -quiet
  Start-Sleep 5
  
  Enable-WSManCredSSP -Role Server -Force
