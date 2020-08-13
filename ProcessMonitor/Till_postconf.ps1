@@ -6,8 +6,7 @@ param (
 
 
 
-#installing some missing component
-Enable-WindowsOptionalFeature -Online -FeatureName WAS-NetFxEnvironment -All
+
 
 
 #Installing the Sql Express
@@ -30,3 +29,6 @@ Invoke-Command -Authentication CredSSP -ScriptBlock {choco install sql-server-ex
 #create admin user
 #New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
 #Add-LocalGroupMember -Group "Administrators" -Member "mpinstaller" -Verbose -ErrorAction SilentlyContinue 
+
+#installing some missing component
+#Enable-WindowsOptionalFeature -Online -FeatureName WAS-NetFxEnvironment -All -ErrorAction SilentlyContinue
