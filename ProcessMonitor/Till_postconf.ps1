@@ -1,7 +1,7 @@
 param (
     [string]$WinAdmNm,
-    [string]$WinAdmPass,
-    [string]$WinUsrPass
+    [string]$WinAdmPass
+#    [string]$WinUsrPass
 )
 
 
@@ -25,8 +25,8 @@ New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDele
 
 $securePassword = ConvertTo-SecureString $WinAdmPass -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential ".\$WinAdmNm", $securePassword
-Invoke-Command -Authentication CredSSP -ScriptBlock {choco install sql-server-express --version=14.1801.3958.1 -y} -ComputerName $env:COMPUTERNAME -Credential $credential
+Invoke-Command -Authentication CredSSP -ScriptBlock {choco install sql-server-express --version=2017.20190916 -y} -ComputerName $env:COMPUTERNAME -Credential $credential
 
 #create admin user
-New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
-Add-LocalGroupMember -Group "Administrators" -Member "mpinstaller" -Verbose -ErrorAction SilentlyContinue 
+#New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
+#Add-LocalGroupMember -Group "Administrators" -Member "mpinstaller" -Verbose -ErrorAction SilentlyContinue 
