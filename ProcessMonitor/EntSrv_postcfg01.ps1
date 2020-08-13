@@ -33,7 +33,7 @@ Set-Service -Name SQLSERVERAGENT -StartupType Automatic
 
  #leaving part below for the pipelines...
 
-
+<#
 # Wait for some time just in case
 #Start-Sleep -Seconds 10
 
@@ -143,3 +143,4 @@ Invoke-Sqlcmd -ServerInstance "localhost" -Query $query2 -QueryTimeout 0 -Userna
  } -credential $loginCred -ComputerName $env:COMPUTERNAME
 
 
+#>
