@@ -14,7 +14,7 @@ param (
 
 
  # enable winrm
-Enable-PSRemoting -SkipNetworkProfileCheck -Force
+Enable-PSRemoting -SkipNetworkProfileCheck -Force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 Start-Sleep 5
 
 Enable-WSManCredSSP -Role Server -Force
