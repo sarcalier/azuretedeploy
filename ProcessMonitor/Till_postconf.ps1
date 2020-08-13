@@ -4,8 +4,7 @@ param (
     [string]$WinUsrPass
 )
 
-New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
-Add-LocalGroupMember -Group "Administrators" -Member "mpinstaller" -Verbose -ErrorAction SilentlyContinue 
+
 
 #installing some missing component
 Enable-WindowsOptionalFeature -Online -FeatureName WAS-NetFxEnvironment -All
@@ -28,4 +27,6 @@ $securePassword = ConvertTo-SecureString $WinAdmPass -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential ".\$WinAdmNm", $securePassword
 Invoke-Command -Authentication CredSSP -ScriptBlock {choco install sql-server-express --version=14.1801.3958.1 -y} -ComputerName $env:COMPUTERNAME -Credential $credential
 
-
+#create admin user
+New-LocalUser -Name "mpinstaller" -Password (ConvertTo-SecureString -String $WinUsrPass -AsPlainText -Force) -AccountNeverExpires -PasswordNeverExpires -UserMayNotChangePassword -Verbose -ErrorAction SilentlyContinue 
+Add-LocalGroupMember -Group "Administrators" -Member "mpinstaller" -Verbose -ErrorAction SilentlyContinue 
