@@ -1,6 +1,8 @@
 data "azurerm_public_ip" "lb_ip" {
   name                = azurerm_public_ip.main.name
   resource_group_name = azurerm_resource_group.main.name
+
+  depends_on = [azurerm_public_ip.main]
 }
 
 output "LbPublicIP" {
