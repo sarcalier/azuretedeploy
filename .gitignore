@@ -20,3 +20,8 @@ AKS_monitor/terraform/s1/.terraform/plugins/selections.json
 AKS_monitor/terraform/s1/.terraform/plugins/registry.terraform.io/hashicorp/azurerm/2.30.0/windows_amd64/terraform-provider-azurerm_v2.30.0_x5.exe
 AKS_monitor/terraform/s1/.terraform.tfstate.lock.info
 AKS_monitor/terraform/s1/terraform.tfstate
+AKS_monitor/terraform/s2/.terraform/plugins/registry.terraform.io/hashicorp/random/2.3.0/windows_amd64/terraform-provider-random_v2.3.0_x4.exe
+AKS_monitor/terraform/s2/.terraform/plugins/selections.json
+AKS_monitor/terraform/s2/.terraform/plugins/registry.terraform.io/hashicorp/azurerm/2.30.0/windows_amd64/terraform-provider-azurerm_v2.30.0_x5.exe
+AKS_monitor/terraform/s2/terraform.tfstate
+AKS_monitor/terraform/s2/.terraform.tfstate.lock.info
