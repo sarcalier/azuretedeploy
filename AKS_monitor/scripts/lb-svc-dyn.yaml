@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    service.beta.kubernetes.io/azure-dns-label-name: nginxk8smonpoc
+    service.beta.kubernetes.io/azure-dns-label-name: nginxk8spoc
   name: azure-load-balancer
 spec:
   type: LoadBalancer
