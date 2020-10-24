@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx0-deployment
+  labels:
+    app: nginx0-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx0
+  template:
+    metadata:
+      labels:
+        app: nginx0
+    spec:
+      containers:
+      - name: nginx
+        image: contregzacue.azurecr.io/samples/nginx_alpine:latest
+        ports:
+          - name: port80
+            containerPort: 80
+          - name: port4040
+            containerPort: 4040
