@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: nginxk8spoc2
+  name: azure-load-balancer
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: exporter
+    port: 4040
+    targetPort: 4040
+  selector:
+    app: nginx0
