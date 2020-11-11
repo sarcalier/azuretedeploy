@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: contregzacue.azurecr.io/samples/nginx_alpine:latest
+        image: contregzacue.azurecr.io/samples/nginx_exp:latest
         ports:
           - name: port80
             containerPort: 80
