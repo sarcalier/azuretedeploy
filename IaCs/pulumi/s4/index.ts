@@ -30,6 +30,7 @@ const mainAnalyticsWorkspace = new azure.operationalinsights.AnalyticsWorkspace(
     resourceGroupName: mainResourceGroup.name,
     sku: "PerGB2018",
     retentionInDays: 30,
+    dailyQuotaGb: 5,
 });
 const mainActionGroup = new azure.monitoring.ActionGroup("mainActionGroup", {
     name: "CriticalAlertsAction",
